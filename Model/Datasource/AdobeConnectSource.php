@@ -343,6 +343,11 @@ class AdobeConnectSource extends DataSource {
 			throw new OutOfBoundsException("$alias::request: missing action " . json_encode($data));
 			return false;
 		}
+
+        /**
+         * Post Zoom Deployment - Don't attempt Connect Log-in
+         * Just log request for audit purposes & return early
+         * 
 		if (empty($data['session']) && $data['action'] != 'common-info') {
 			$data['session'] = $this->getSessionKey($this->userKey);
 			if (empty($data['session'])) {
@@ -351,11 +356,16 @@ class AdobeConnectSource extends DataSource {
 				throw new AdobeConnectException($text);
 			}
 		}
+         * */
 
 		//Scrub the data so it's ready for request.
 		$data = $this->__requestPassableData($data);
 		//dataCleaned is what isn't model specific data
 		$dataCleaned = array_diff_key($data, $this->keysDataCleanRestricted);
+
+        // Log any requests for audit/removal and return
+        $this->log($data);
+        return [];
 
 		// setup request
 		$requestOptions = Set::merge(array(
