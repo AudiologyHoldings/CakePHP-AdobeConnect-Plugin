@@ -315,7 +315,7 @@ class AdobeConnectSource extends DataSource {
 	 * @return mixed Depending on what is returned from HttpSocket::request()
 	 */
 	public function request($model_or_null, $data = array(), $requestOptions = array()) {
-        if ($this->config['enabled'] && $this->config['enabled'] === false) {
+        if (array_key_exists('enabled', $this->config) && $this->config['enabled'] === false) {
             $this->log($this->__requestPassableData($this->__requestPassableData($data)));
             return [];
         }
