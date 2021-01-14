@@ -315,6 +315,10 @@ class AdobeConnectSource extends DataSource {
 	 * @return mixed Depending on what is returned from HttpSocket::request()
 	 */
 	public function request($model_or_null, $data = array(), $requestOptions = array()) {
+        if (array_key_exists('enabled', $this->config) && $this->config['enabled'] === false) {
+            $this->log($this->__requestPassableData($this->__requestPassableData($data)));
+            return [];
+        }
 		if (!is_array($data)) {
 			$data = array();
 		}
@@ -343,6 +347,7 @@ class AdobeConnectSource extends DataSource {
 			throw new OutOfBoundsException("$alias::request: missing action " . json_encode($data));
 			return false;
 		}
+
 		if (empty($data['session']) && $data['action'] != 'common-info') {
 			$data['session'] = $this->getSessionKey($this->userKey);
 			if (empty($data['session'])) {
